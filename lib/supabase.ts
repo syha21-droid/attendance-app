@@ -58,11 +58,12 @@ export interface Attendance {
   period_id: string
   period_number: number
   checked_at: string
+  checkout_at?: string | null
   date: string
   status: AttendanceStatus
   late_minutes: number
   profiles?: Profile
-  class_periods?: ClassPeriod
+  class_periods?: ClassPeriod | null
 }
 
 export interface QrToken {
@@ -73,6 +74,7 @@ export interface QrToken {
   token: string
   expires_at: string
   created_by: string
+  type?: 'checkin' | 'checkout'
 }
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!

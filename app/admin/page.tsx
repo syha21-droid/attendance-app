@@ -204,7 +204,8 @@ export default function AdminPage() {
                 <th className="px-4 py-3 text-left text-gray-600 font-medium hidden md:table-cell">사업단</th>
                 <th className="px-4 py-3 text-left text-gray-600 font-medium hidden md:table-cell">지점</th>
                 <th className="px-4 py-3 text-left text-gray-600 font-medium">교시</th>
-                <th className="px-4 py-3 text-left text-gray-600 font-medium">입실시각</th>
+                <th className="px-4 py-3 text-left text-gray-600 font-medium">입실</th>
+                <th className="px-4 py-3 text-left text-gray-600 font-medium hidden md:table-cell">퇴실</th>
                 <th className="px-4 py-3 text-left text-gray-600 font-medium">상태</th>
                 <th className="px-4 py-3 text-left text-gray-600 font-medium hidden md:table-cell">지각시간</th>
                 <th className="px-4 py-3 text-left text-gray-600 font-medium">변경</th>
@@ -221,6 +222,11 @@ export default function AdminPage() {
                   <td className="px-4 py-3 text-gray-600">{row.period_number}교시</td>
                   <td className="px-4 py-3 text-gray-600 font-mono">
                     {row.checked_at ? format(new Date(row.checked_at), 'HH:mm:ss') : '-'}
+                  </td>
+                  <td className="px-4 py-3 text-gray-600 font-mono hidden md:table-cell">
+                    {row.checkout_at
+                      ? <span className="text-orange-600">{format(new Date(row.checkout_at), 'HH:mm:ss')}</span>
+                      : <span className="text-gray-300">-</span>}
                   </td>
                   <td className="px-4 py-3">{statusBadge(row.status)}</td>
                   <td className="px-4 py-3 text-gray-600 hidden md:table-cell">
