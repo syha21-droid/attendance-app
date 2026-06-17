@@ -5,10 +5,20 @@ export async function POST(req: NextRequest) {
   const supabase = createServiceClient()
 
   try {
-    const { email, password, name, branchId, cohort } = await req.json()
+    const { email, password, name, branchName, cohort } = await req.json()
 
-    if (!email || !password || !name || !branchId || !cohort) {
+    if (!email || !password || !name || !branchName || !cohort) {
       return NextResponse.json({ error: '모든 항목을 입력해주세요' }, { status: 400 })
+    }
+
+    const { data: branch, error: branchError } = await supabase
+      .from('branches')
+      .select('id')
+      .ilike('name', branchName.trim())
+      .single()
+
+    if (branchError || !branch) {
+      return NextResponse.json({ error: `"${branchName}" 지점을 찾을 수 없습니다. 정확한 지점명을 입력해주세요.` }, { status: 400 })
     }
 
     const { data: authData, error: authError } = await supabase.auth.admin.createUser({
@@ -26,7 +36,7 @@ export async function POST(req: NextRequest) {
 
     const { error: profileError } = await supabase.from('profiles').insert({
       id: authData.user.id,
-      branch_id: branchId,
+      branch_id: branch.id,
       name,
       role: 'student',
       cohort,

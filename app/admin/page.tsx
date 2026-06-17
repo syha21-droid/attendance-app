@@ -157,6 +157,7 @@ export default function AdminPage() {
             <Link href="/admin/users" className="px-4 py-2 text-sm bg-green-100 hover:bg-green-200 rounded-lg text-green-700">회원 관리</Link>
             <Link href="/admin/periods" className="px-4 py-2 text-sm bg-purple-100 hover:bg-purple-200 rounded-lg text-purple-700">교시 설정</Link>
             <Link href="/admin/qr" className="px-4 py-2 text-sm bg-blue-100 hover:bg-blue-200 rounded-lg text-blue-700">QR 생성</Link>
+            <Link href="/admin/dropouts" className="px-4 py-2 text-sm bg-red-100 hover:bg-red-200 rounded-lg text-red-700">중간 이탈</Link>
             <button onClick={downloadCSV} className="px-4 py-2 text-sm bg-green-100 hover:bg-green-200 rounded-lg text-green-700">CSV 다운로드</button>
             <button onClick={handleLogout} className="px-4 py-2 text-sm bg-red-100 hover:bg-red-200 rounded-lg text-red-700">로그아웃</button>
           </div>

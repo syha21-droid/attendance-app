@@ -20,6 +20,7 @@ export default function PeriodsPage() {
     start_time: '09:00',
     end_time: '10:30',
     late_threshold_minutes: 5,
+    course_type: '',
   })
 
   useEffect(() => {
@@ -90,7 +91,7 @@ export default function PeriodsPage() {
     if (error) { toast.error('추가 실패: ' + error.message); return }
     toast.success('교시가 추가되었습니다')
     setShowAddForm(false)
-    setNewPeriod({ period_number: 1, name: '', start_time: '09:00', end_time: '10:30', late_threshold_minutes: 5 })
+    setNewPeriod({ period_number: 1, name: '', start_time: '09:00', end_time: '10:30', late_threshold_minutes: 5, course_type: '' })
     loadData()
   }
 
@@ -163,7 +164,7 @@ export default function PeriodsPage() {
                     />
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 flex-wrap">
                   <div>
                     <label className="text-xs text-gray-500">지각 기준(분)</label>
                     <input type="number" min={0}
@@ -171,6 +172,18 @@ export default function PeriodsPage() {
                       onChange={(e) => setEditForm(f => ({ ...f, late_threshold_minutes: +e.target.value }))}
                       className="w-24 border rounded px-2 py-1 text-sm"
                     />
+                  </div>
+                  <div>
+                    <label className="text-xs text-gray-500">수업 종류</label>
+                    <input type="text" list="edit-course-type-list"
+                      value={editForm.course_type ?? (period.course_type || '')}
+                      onChange={(e) => setEditForm(f => ({ ...f, course_type: e.target.value }))}
+                      className="w-32 border rounded px-2 py-1 text-sm"
+                      placeholder="예: MBA"
+                    />
+                    <datalist id="edit-course-type-list">
+                      <option value="MBA" /><option value="창업스쿨" /><option value="마케팅" /><option value="IT/개발" /><option value="일반" />
+                    </datalist>
                   </div>
                   <div className="flex gap-2 mt-4">
                     <button onClick={() => saveEdit(period.id)} className="px-4 py-1.5 bg-blue-600 text-white rounded-lg text-sm">저장</button>
@@ -185,6 +198,7 @@ export default function PeriodsPage() {
                   <span className="text-gray-600 mr-3">{period.name}</span>
                   <span className="text-gray-500 text-sm">{period.start_time} ~ {period.end_time}</span>
                   <span className="ml-3 text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full">지각기준 {period.late_threshold_minutes}분</span>
+                  {period.course_type && <span className="ml-1 text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">{period.course_type}</span>}
                 </div>
                 <div className="flex items-center gap-2">
                   <button
@@ -242,7 +256,7 @@ export default function PeriodsPage() {
                 />
               </div>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-wrap">
               <div>
                 <label className="text-xs text-gray-500">지각 기준(분)</label>
                 <input type="number" min={0}
@@ -250,6 +264,18 @@ export default function PeriodsPage() {
                   onChange={(e) => setNewPeriod(f => ({ ...f, late_threshold_minutes: +e.target.value }))}
                   className="w-24 border rounded px-2 py-1 text-sm"
                 />
+              </div>
+              <div>
+                <label className="text-xs text-gray-500">수업 종류</label>
+                <input type="text" list="add-course-type-list"
+                  value={newPeriod.course_type}
+                  onChange={(e) => setNewPeriod(f => ({ ...f, course_type: e.target.value }))}
+                  className="w-32 border rounded px-2 py-1 text-sm"
+                  placeholder="예: MBA"
+                />
+                <datalist id="add-course-type-list">
+                  <option value="MBA" /><option value="창업스쿨" /><option value="마케팅" /><option value="IT/개발" /><option value="일반" />
+                </datalist>
               </div>
               <div className="flex gap-2 mt-4">
                 <button onClick={addPeriod} className="px-4 py-1.5 bg-blue-600 text-white rounded-lg text-sm">추가</button>

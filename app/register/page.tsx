@@ -1,56 +1,21 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
 import toast from 'react-hot-toast'
 import Link from 'next/link'
 
-interface Branch {
-  id: string
-  name: string
-  organizations: { name: string }
-}
-
 export default function RegisterPage() {
   const router = useRouter()
-  const [branches, setBranches] = useState<Branch[]>([])
-  const [cohorts, setCohorts] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
   const [form, setForm] = useState({
     email: '',
     password: '',
     passwordConfirm: '',
     name: '',
-    branchId: '',
+    branchName: '',
     cohort: '',
-    newCohort: '',
   })
-
-  useEffect(() => {
-    loadBranches()
-  }, [])
-
-  useEffect(() => {
-    if (form.branchId) loadCohorts(form.branchId)
-  }, [form.branchId])
-
-  async function loadBranches() {
-    const { data } = await supabase
-      .from('branches')
-      .select('*, organizations(name)')
-    setBranches(data || [])
-    if (data && data.length === 1) setForm(f => ({ ...f, branchId: data[0].id }))
-  }
-
-  async function loadCohorts(branchId: string) {
-    const { data } = await supabase
-      .from('cohort_targets')
-      .select('cohort')
-      .eq('branch_id', branchId)
-      .order('cohort')
-    setCohorts(data?.map(d => d.cohort) || [])
-  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -60,11 +25,6 @@ export default function RegisterPage() {
     }
     if (form.password.length < 6) {
       toast.error('비밀번호는 6자 이상이어야 합니다')
-      return
-    }
-    const cohort = form.cohort === '__new__' ? form.newCohort : form.cohort
-    if (!cohort) {
-      toast.error('기수를 선택하거나 입력해주세요')
       return
     }
 
@@ -77,8 +37,8 @@ export default function RegisterPage() {
           email: form.email,
           password: form.password,
           name: form.name,
-          branchId: form.branchId,
-          cohort,
+          branchName: form.branchName,
+          cohort: form.cohort,
         }),
       })
       const data = await res.json()
@@ -118,46 +78,27 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">지점</label>
-            <select
-              value={form.branchId}
-              onChange={e => setForm(f => ({ ...f, branchId: e.target.value, cohort: '' }))}
+            <label className="block text-sm font-medium text-gray-700 mb-1">지점명</label>
+            <input
+              type="text"
+              value={form.branchName}
+              onChange={e => setForm(f => ({ ...f, branchName: e.target.value }))}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+              placeholder="예: 에임하이 강남점"
               required
-            >
-              <option value="">지점 선택</option>
-              {branches.map(b => (
-                <option key={b.id} value={b.id}>
-                  {b.organizations?.name} - {b.name}
-                </option>
-              ))}
-            </select>
+            />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">기수</label>
-            <select
+            <input
+              type="text"
               value={form.cohort}
               onChange={e => setForm(f => ({ ...f, cohort: e.target.value }))}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+              placeholder="예: 10기"
               required
-            >
-              <option value="">기수 선택</option>
-              {cohorts.map(c => (
-                <option key={c} value={c}>{c}</option>
-              ))}
-              <option value="__new__">직접 입력</option>
-            </select>
-            {form.cohort === '__new__' && (
-              <input
-                type="text"
-                value={form.newCohort}
-                onChange={e => setForm(f => ({ ...f, newCohort: e.target.value }))}
-                className="w-full mt-2 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                placeholder="예: 10기"
-                required
-              />
-            )}
+            />
           </div>
 
           <div>

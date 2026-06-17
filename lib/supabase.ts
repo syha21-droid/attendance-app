@@ -20,6 +20,7 @@ export interface Profile {
   branch_id: string
   name: string
   role: Role
+  cohort?: string
   created_at?: string
   branches?: Branch & { organizations?: Organization }
 }
@@ -33,6 +34,22 @@ export interface ClassPeriod {
   end_time: string
   late_threshold_minutes: number
   is_active: boolean
+  course_type?: string
+}
+
+export interface Dropout {
+  id: string
+  user_id: string
+  branch_id: string
+  cohort?: string
+  period_id?: string
+  course_type?: string
+  dropout_date: string
+  reason: string
+  reason_detail?: string
+  created_at: string
+  profiles?: Profile
+  class_periods?: ClassPeriod | null
 }
 
 export interface Attendance {
