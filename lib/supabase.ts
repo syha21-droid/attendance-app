@@ -20,6 +20,7 @@ export interface Profile {
   branch_id: string
   name: string
   role: Role
+  created_at?: string
   branches?: Branch & { organizations?: Organization }
 }
 
