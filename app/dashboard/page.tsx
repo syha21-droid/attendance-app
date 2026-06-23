@@ -1,9 +1,8 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { getCurrentUser, logoutUser } from '@/lib/storage/user'
+import { logoutUser } from '@/lib/storage/user'
 import { LogOut, Home } from 'lucide-react'
-import { useEffect, useState } from 'react'
 
 interface User {
   id: string
@@ -15,27 +14,13 @@ interface User {
 
 export default function DashboardPage() {
   const router = useRouter()
-  const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const currentUser = getCurrentUser()
-      if (!currentUser) {
-        router.push('/login')
-        return
-      }
-      setUser(currentUser)
-      setLoading(false)
+  let user: User | null = null
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('attendance_current_user')
+    if (stored) {
+      user = JSON.parse(stored)
     }
-  }, [router])
-
-  if (loading) {
-    return <div className="flex items-center justify-center h-screen">로딩 중...</div>
-  }
-
-  if (!user) {
-    return null
   }
 
   function handleLogout() {
