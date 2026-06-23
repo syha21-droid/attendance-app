@@ -107,13 +107,8 @@ export default function AdminPage() {
       </nav>
 
       <main className="max-w-7xl mx-auto px-4 py-8">
-        <div className="bg-white rounded-lg shadow p-8 mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">안녕하세요, {user.name}님!</h2>
-          <p className="text-gray-600">관리자 권한으로 로그인했습니다</p>
-        </div>
-
-        <div className="bg-white rounded-lg shadow p-8 mb-8">
-          <h3 className="text-xl font-bold text-gray-900 mb-4">📚 강의 관리</h3>
+        <div className="bg-blue-50 border-2 border-blue-500 rounded-lg p-8 mb-8">
+          <h3 className="text-2xl font-bold text-blue-900 mb-4">📚 강의 관리</h3>
           <div className="flex gap-2 mb-4">
             <input
               type="text"
@@ -130,21 +125,30 @@ export default function AdminPage() {
               + 추가
             </button>
           </div>
-          {courses.length > 0 && (
-            <div className="space-y-2">
-              {courses.map((course, idx) => (
-                <div key={idx} className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
-                  <span className="font-medium text-gray-900">{course}</span>
-                  <button
-                    onClick={() => handleDeleteCourse(idx)}
-                    className="text-red-600 hover:text-red-800 font-medium"
-                  >
-                    삭제
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
+          <div className="bg-white rounded p-4">
+            {courses.length > 0 ? (
+              <div className="space-y-2">
+                {courses.map((course, idx) => (
+                  <div key={idx} className="flex items-center justify-between bg-blue-50 p-3 rounded-lg border-l-4 border-blue-500">
+                    <span className="font-medium text-gray-900">✓ {course}</span>
+                    <button
+                      onClick={() => handleDeleteCourse(idx)}
+                      className="text-red-600 hover:text-red-800 font-medium text-sm"
+                    >
+                      삭제
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-500 text-center py-4">추가된 강의가 없습니다</p>
+            )}
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow p-8 mb-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">안녕하세요, {user.name}님!</h2>
+          <p className="text-gray-600">관리자 권한으로 로그인했습니다</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
