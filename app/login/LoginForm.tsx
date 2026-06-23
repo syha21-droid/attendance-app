@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { GraduationCap, Lock, Mail, BookOpen, Shield } from 'lucide-react'
+import { initializeUsers, loginUser, registerUser, userExists } from '@/lib/storage/user'
+import { initializeCourses, getCourses } from '@/lib/storage/courses'
 
 export default function LoginPage() {
   const [mode, setMode] = useState<'login' | 'signup' | 'admin_signup'>('login')
@@ -16,38 +18,26 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   useEffect(() => {
-    async function fetchCourses() {
-      try {
-        const res = await fetch('/api/courses')
-        if (!res.ok) throw new Error('사업단 로드 실패')
-        const data = await res.json()
-        console.log('Courses fetch result:', { data })
-        setCourses(data)
-      } catch (err) {
-        console.error('Courses fetch error:', err)
-      }
+    if (typeof window !== 'undefined') {
+      initializeCourses()
+      const courseList = getCourses()
+      setCourses(courseList)
     }
-    fetchCourses()
   }, [])
 
-  async function handleLogin(e: React.FormEvent) {
+  function handleLogin(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
     try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      })
+      if (typeof window === 'undefined') throw new Error('클라이언트에서만 실행 가능')
 
-      if (!res.ok) {
-        const error = await res.json()
-        throw new Error(error.error || '로그인 실패')
+      initializeUsers()
+      const user = loginUser(email, password)
+      if (!user) {
+        throw new Error('이메일 또는 비밀번호가 잘못되었습니다')
       }
 
-      const user = await res.json()
       toast.success('로그인 성공!')
-
       if (user.isAdmin) {
         router.push('/admin')
       } else {
@@ -62,7 +52,7 @@ export default function LoginPage() {
     }
   }
 
-  async function handleSignup(e: React.FormEvent) {
+  function handleSignup(e: React.FormEvent) {
     e.preventDefault()
     if (!courseId) {
       toast.error('사업단을 입력해주세요')
@@ -70,22 +60,20 @@ export default function LoginPage() {
     }
     setLoading(true)
     try {
-      const res = await fetch('/api/auth/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email,
-          password,
-          name,
-          courseId,
-          isAdmin: false,
-        }),
-      })
+      if (typeof window === 'undefined') throw new Error('클라이언트에서만 실행 가능')
 
-      if (!res.ok) {
-        const error = await res.json()
-        throw new Error(error.error || '가입 실패')
+      initializeUsers()
+      if (userExists(email)) {
+        throw new Error('이미 존재하는 이메일입니다')
       }
+
+      registerUser({
+        email,
+        password,
+        name,
+        courseId,
+        isAdmin: false,
+      })
 
       toast.success('가입 완료! 로그인해주세요')
       setMode('login')
@@ -102,25 +90,23 @@ export default function LoginPage() {
     }
   }
 
-  async function handleAdminSignup(e: React.FormEvent) {
+  function handleAdminSignup(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
     try {
-      const res = await fetch('/api/auth/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email,
-          password,
-          name,
-          isAdmin: true,
-        }),
-      })
+      if (typeof window === 'undefined') throw new Error('클라이언트에서만 실행 가능')
 
-      if (!res.ok) {
-        const error = await res.json()
-        throw new Error(error.error || '관리자 가입 실패')
+      initializeUsers()
+      if (userExists(email)) {
+        throw new Error('이미 존재하는 이메일입니다')
       }
+
+      registerUser({
+        email,
+        password,
+        name,
+        isAdmin: true,
+      })
 
       toast.success('관리자 가입 완료! 로그인해주세요')
       setMode('login')
