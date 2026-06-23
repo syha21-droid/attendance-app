@@ -67,23 +67,19 @@ export default function AdminPage() {
   }
 
   const handleStudentList = () => {
-    toast.success('✅ 학생 목록 페이지로 이동합니다')
-    setTimeout(() => router.push('/admin/students'), 500)
+    router.push('/admin/students')
   }
 
   const handleAttendance = () => {
-    toast.success('✅ 출석 현황 페이지로 이동합니다')
-    setTimeout(() => router.push('/admin/attendance'), 500)
+    router.push('/admin/attendance')
   }
 
   const handleLateReason = () => {
-    toast.success('✅ 지각 관리 페이지로 이동합니다')
-    setTimeout(() => router.push('/admin/late-reasons'), 500)
+    router.push('/admin/late-reasons')
   }
 
   const handleDropout = () => {
-    toast.success('✅ 중간이탈 관리 페이지로 이동합니다')
-    setTimeout(() => router.push('/admin/dropouts'), 500)
+    router.push('/admin/dropouts')
   }
 
   const handleCourseAdd = () => {
