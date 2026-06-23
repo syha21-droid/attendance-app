@@ -14,11 +14,8 @@ export default function LoginPage() {
   const [courseId, setCourseId] = useState('')
   const [classNumber, setClassNumber] = useState('')
   const [courses, setCourses] = useState<{ id: string; title: string }[]>([])
-  const [adminCode, setAdminCode] = useState('')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
-  const ADMIN_CODE = '1234'
-
   useEffect(() => {
     async function fetchCourses() {
       try {
@@ -104,10 +101,6 @@ export default function LoginPage() {
 
   async function handleAdminSignup(e: React.FormEvent) {
     e.preventDefault()
-    if (adminCode !== ADMIN_CODE) {
-      toast.error('관리자 코드가 올바르지 않습니다')
-      return
-    }
     setLoading(true)
     const supabase = createClient()
     try {
@@ -128,7 +121,6 @@ export default function LoginPage() {
       setEmail('')
       setPassword('')
       setName('')
-      setAdminCode('')
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : '관리자 가입 실패'
       toast.error(message)
@@ -321,21 +313,6 @@ export default function LoginPage() {
                 onChange={(e) => setName(e.target.value)}
                 required
                 placeholder="이름을 입력하세요"
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
-                <Shield className="w-4 h-4" />
-                관리자 코드
-              </label>
-              <input
-                type="password"
-                value={adminCode}
-                onChange={(e) => setAdminCode(e.target.value)}
-                required
-                placeholder="관리자 코드 입력"
                 className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
               />
             </div>
