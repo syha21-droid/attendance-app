@@ -4,18 +4,20 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
-import { GraduationCap, Lock, Mail, BookOpen } from 'lucide-react'
+import { GraduationCap, Lock, Mail, BookOpen, Shield } from 'lucide-react'
 
 export default function LoginPage() {
-  const [mode, setMode] = useState<'login' | 'signup'>('login')
+  const [mode, setMode] = useState<'login' | 'signup' | 'admin_signup'>('login')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
   const [courseId, setCourseId] = useState('')
   const [classNumber, setClassNumber] = useState('')
   const [courses, setCourses] = useState<{ id: string; title: string }[]>([])
+  const [adminCode, setAdminCode] = useState('')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+  const ADMIN_CODE = 'admin2024'
 
   useEffect(() => {
     async function fetchCourses() {
@@ -94,6 +96,41 @@ export default function LoginPage() {
     }
   }
 
+  async function handleAdminSignup(e: React.FormEvent) {
+    e.preventDefault()
+    if (adminCode !== ADMIN_CODE) {
+      toast.error('관리자 코드가 올바르지 않습니다')
+      return
+    }
+    setLoading(true)
+    const supabase = createClient()
+    try {
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email,
+        password,
+      })
+      if (authError) throw authError
+
+      await supabase.from('admins').insert({
+        id: authData.user?.id,
+        name,
+        email,
+      })
+
+      toast.success('관리자 가입 완료! 로그인해주세요')
+      setMode('login')
+      setEmail('')
+      setPassword('')
+      setName('')
+      setAdminCode('')
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : '관리자 가입 실패'
+      toast.error(message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-8">
@@ -124,6 +161,16 @@ export default function LoginPage() {
             }`}
           >
             회원가입
+          </button>
+          <button
+            onClick={() => setMode('admin_signup')}
+            className={`flex-1 py-2 text-sm font-medium border-b-2 transition-colors ${
+              mode === 'admin_signup'
+                ? 'border-indigo-600 text-indigo-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            관리자
           </button>
         </div>
 
@@ -171,7 +218,7 @@ export default function LoginPage() {
               {loading ? '로그인 중...' : '로그인'}
             </button>
           </form>
-        ) : (
+        ) : mode === 'signup' ? (
           <form onSubmit={handleSignup} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -259,6 +306,79 @@ export default function LoginPage() {
               className="w-full bg-indigo-600 text-white py-2.5 rounded-lg font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
             >
               {loading ? '가입 중...' : '가입하기'}
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={handleAdminSignup} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                이름
+              </label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                placeholder="이름을 입력하세요"
+                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
+                <Shield className="w-4 h-4" />
+                관리자 코드
+              </label>
+              <input
+                type="password"
+                value={adminCode}
+                onChange={(e) => setAdminCode(e.target.value)}
+                required
+                placeholder="관리자 코드 입력"
+                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                이메일
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  placeholder="example@email.com"
+                  className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                비밀번호
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  placeholder="비밀번호를 입력하세요"
+                  className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-red-600 text-white py-2.5 rounded-lg font-medium hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+            >
+              {loading ? '관리자 등록 중...' : '관리자 등록'}
             </button>
           </form>
         )}
