@@ -17,7 +17,7 @@ export default function LoginPage() {
   const [adminCode, setAdminCode] = useState('')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
-  const ADMIN_CODE = 'admin2024'
+  const ADMIN_CODE = '1234'
 
   useEffect(() => {
     async function fetchCourses() {
