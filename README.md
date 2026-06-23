@@ -1,4 +1,6 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 출석체크 & 학습 관리 시스템
+
+이것은 수강생 출석 관리 및 학습 현황 추적을 위한 [Next.js](https://nextjs.org) 기반 웹 시스템입니다.
 
 ## Getting Started
 
