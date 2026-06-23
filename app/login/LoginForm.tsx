@@ -3,11 +3,20 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
-import { GraduationCap, Lock, Mail, BookOpen, Shield } from 'lucide-react'
+import { GraduationCap, Lock, Mail, LogOut } from 'lucide-react'
 import { initializeUsers, loginUser, registerUser, userExists } from '@/lib/storage/user'
 import { initializeCourses, getCourses } from '@/lib/storage/courses'
 
+interface User {
+  id: string
+  email: string
+  name: string
+  courseId?: string
+  isAdmin: boolean
+}
+
 export default function LoginPage() {
+  const router = useRouter()
   const [mode, setMode] = useState<'login' | 'signup' | 'admin_signup'>('login')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -16,7 +25,7 @@ export default function LoginPage() {
   const [classNumber, setClassNumber] = useState('')
   const [courses, setCourses] = useState<{ id: string; title: string }[]>([])
   const [loading, setLoading] = useState(false)
-  const router = useRouter()
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       initializeCourses()
@@ -29,20 +38,21 @@ export default function LoginPage() {
     e.preventDefault()
     setLoading(true)
     try {
-      if (typeof window === 'undefined') throw new Error('클라이언트에서만 실행 가능')
-
       initializeUsers()
       const user = loginUser(email, password)
       if (!user) {
         throw new Error('이메일 또는 비밀번호가 잘못되었습니다')
       }
 
-      // 즉시 페이지 리로드로 리다이렉트
+      localStorage.setItem('attendance_current_user', JSON.stringify(user))
+      toast.success('로그인 성공!')
+
       if (user.isAdmin) {
-        window.location.href = '/admin'
+        router.push('/admin')
       } else {
-        window.location.href = '/dashboard'
+        router.push('/student')
       }
+      setLoading(false)
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : '로그인 실패'
       toast.error(message)
@@ -65,7 +75,7 @@ export default function LoginPage() {
         throw new Error('이미 존재하는 이메일입니다')
       }
 
-      registerUser({
+      const newUser = registerUser({
         email,
         password,
         name,
@@ -73,13 +83,9 @@ export default function LoginPage() {
         isAdmin: false,
       })
 
-      toast.success('가입 완료! 로그인해주세요')
-      setMode('login')
-      setEmail('')
-      setPassword('')
-      setName('')
-      setCourseId('')
-      setClassNumber('')
+      localStorage.setItem('attendance_current_user', JSON.stringify(newUser))
+      toast.success('✅ 가입 완료! 학생 대시보드로 이동합니다.')
+      router.push('/student')
       setLoading(false)
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : '가입 실패'
@@ -99,18 +105,16 @@ export default function LoginPage() {
         throw new Error('이미 존재하는 이메일입니다')
       }
 
-      registerUser({
+      const newAdmin = registerUser({
         email,
         password,
         name,
         isAdmin: true,
       })
 
-      toast.success('관리자 가입 완료! 로그인해주세요')
-      setMode('login')
-      setEmail('')
-      setPassword('')
-      setName('')
+      localStorage.setItem('attendance_current_user', JSON.stringify(newAdmin))
+      toast.success('✅ 관리자 가입 완료! 관리자 대시보드로 이동합니다.')
+      router.push('/admin')
       setLoading(false)
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : '관리자 가입 실패'
@@ -118,6 +122,35 @@ export default function LoginPage() {
       setLoading(false)
     }
   }
+
+  function handleQuickTest() {
+    const testUser = {
+      id: 'test-user-1',
+      email: 'test@test.com',
+      password: 'test1234',
+      name: '테스트 사용자',
+      courseId: '1번 사업단',
+      isAdmin: false,
+    }
+    localStorage.setItem('attendance_current_user', JSON.stringify(testUser))
+    toast.success('✅ 학생 대시보드로 이동합니다!')
+    router.push('/student')
+  }
+
+  function handleQuickAdminTest() {
+    const testAdmin = {
+      id: 'admin-test-1',
+      email: 'admin@test.com',
+      password: 'test1234',
+      name: '테스트 관리자',
+      isAdmin: true,
+    }
+    localStorage.setItem('attendance_current_user', JSON.stringify(testAdmin))
+    toast.success('✅ 관리자 대시보드로 이동합니다!')
+    router.push('/admin')
+  }
+
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
@@ -205,6 +238,24 @@ export default function LoginPage() {
             >
               {loading ? '로그인 중...' : '로그인'}
             </button>
+
+            <div className="pt-4 border-t">
+              <p className="text-xs text-gray-500 text-center mb-3">테스트하기</p>
+              <button
+                type="button"
+                onClick={handleQuickTest}
+                className="w-full bg-green-600 text-white py-2 rounded-lg font-medium hover:bg-green-700 transition-colors text-sm"
+              >
+                학생 대시보드 테스트
+              </button>
+              <button
+                type="button"
+                onClick={handleQuickAdminTest}
+                className="w-full bg-purple-600 text-white py-2 rounded-lg font-medium hover:bg-purple-700 transition-colors text-sm mt-2"
+              >
+                관리자 대시보드 테스트
+              </button>
+            </div>
           </form>
         ) : mode === 'signup' ? (
           <form onSubmit={handleSignup} className="space-y-4">

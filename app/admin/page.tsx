@@ -1,121 +1,149 @@
-export const dynamic = 'force-dynamic'
+﻿'use client'
 
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
-import { AdminClient } from './AdminClient'
-import { Period } from '@/types'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import toast from 'react-hot-toast'
+import { LogOut } from 'lucide-react'
 
-export default async function AdminPage() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+interface User {
+  id: string
+  email: string
+  name: string
+  isAdmin: boolean
+}
 
-  // admin 확인
-  const { data: admin } = await supabase
-    .from('admins')
-    .select('*')
-    .eq('id', user.id)
-    .single()
-  if (!admin) redirect('/dashboard')
+export default function AdminPage() {
+  const router = useRouter()
+  const [user, setUser] = useState<User | null>(null)
+  const [adminPage, setAdminPage] = useState<string | null>(null)
 
-  // 강좌 목록
-  const { data: courses } = await supabase.from('courses').select('*').order('created_at')
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const userData = localStorage.getItem('attendance_current_user')
+      if (!userData) {
+        router.push('/login')
+        return
+      }
 
-  // 회차 + 교시
-  const { data: sessions } = await supabase
-    .from('sessions')
-    .select('*, periods(*)')
-    .order('session_number')
+      try {
+        const parsedUser = JSON.parse(userData)
+        if (!parsedUser.isAdmin) {
+          router.push('/student')
+          return
+        }
+        setUser(parsedUser)
+      } catch (e) {
+        router.push('/login')
+      }
+    }
+  }, [router])
 
-  // 수강생 전체
-  const { data: students } = await supabase
-    .from('students')
-    .select('*')
-    .order('name')
-
-  // 오늘 출결 데이터
-  const today = new Date().toISOString().split('T')[0]
-  const todaySession = sessions?.find((s) => s.date === today)
-
-  let todayAttendances: unknown[] = []
-  if (todaySession) {
-    const { data } = await supabase
-      .from('attendance')
-      .select('*')
-      .eq('session_id', todaySession.id)
-    todayAttendances = data ?? []
+  const handleLogout = () => {
+    localStorage.removeItem('attendance_current_user')
+    router.push('/login')
   }
 
-  // 지각 사유 목록
-  const { data: lateReasons } = await supabase
-    .from('late_reasons')
-    .select('*, student:students(*), attendance:attendance(late_minutes, attendance_id:id, period:periods(period_number), session:sessions(session_number))')
-    .order('submitted_at', { ascending: false })
-
-  // 공결 신청
-  const { data: absenceRequests } = await supabase
-    .from('absence_requests')
-    .select('*, student:students(*), session:sessions(*), period:periods(*)')
-    .order('requested_at', { ascending: false })
-
-  // 이탈 기록
-  const { data: dropouts } = await supabase
-    .from('dropouts')
-    .select('*, student:students(*), period:periods(*), session:sessions(*)')
-    .order('exit_time', { ascending: false })
-
-  // 출결 설정 (첫 번째 강좌 기준)
-  const firstCourse = courses?.[0]
-  const { data: settingsRaw } = firstCourse
-    ? await supabase.from('attendance_settings').select('*').eq('course_id', firstCourse.id).single()
-    : { data: null }
-
-  const settings = settingsRaw ?? {
-    course_id: firstCourse?.id ?? '',
-    late_threshold_minutes: 15,
-    absent_threshold_minutes: 30,
-    late_to_absent_ratio: 3,
-    min_attendance_rate: 80,
-    exit_threshold_minutes: 10,
-    notify_late: true,
-    notify_absent: true,
-    notify_low_rate: true,
-    notify_excuse_request: true,
+  if (!user) {
+    return <div className="min-h-screen flex items-center justify-center">로딩 중...</div>
   }
 
-  // 학습 자료
-  const { data: materials } = await supabase
-    .from('materials')
-    .select('*')
-    .order('uploaded_at', { ascending: false })
+  // 중간이탈 관리
+  if (adminPage === 'dropout') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-red-50 to-pink-100">
+        <nav className="bg-white shadow">
+          <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button onClick={() => setAdminPage(null)} className="text-indigo-600 font-medium hover:underline">
+              ← 돌아가기
+            </button>
+            <h1 className="text-2xl font-bold text-gray-900">중간이탈 관리</h1>
+            <button onClick={handleLogout} className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg">
+              <LogOut className="w-4 h-4" />
+              로그아웃
+            </button>
+          </div>
+        </nav>
+        <main className="max-w-7xl mx-auto px-4 py-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="bg-white rounded-lg shadow p-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">🚫 중간이탈 학생</h2>
+              <div className="space-y-3">
+                <div className="border rounded-lg p-4 bg-red-50">
+                  <p className="font-medium">📌 학생1: test@test.com</p>
+                  <p className="text-gray-600 text-sm">사업단: 1번 사업단</p>
+                  <p className="text-gray-600 text-sm">이탈일: 2026-06-20</p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-white rounded-lg shadow p-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">📊 통계</h2>
+              <div className="space-y-4">
+                <div className="bg-red-50 p-4 rounded">
+                  <p className="text-gray-600 text-sm">중간이탈 학생</p>
+                  <p className="text-3xl font-bold text-red-600">2명</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    )
+  }
 
-  // periodsMap
-  const periodsMap: Record<string, Period[]> = {}
-  sessions?.forEach((s) => {
-    periodsMap[s.id] = (s.periods ?? []) as Period[]
-  })
-
-  // 오늘 출결 요약
-  const counts = { present: 0, late: 0, absent: 0, excused: 0, exited: 0 }
-  todayAttendances.forEach((a: unknown) => {
-    const att = a as { status: string }
-    if (att.status in counts) counts[att.status as keyof typeof counts]++
-  })
-
+  // 메인 대시보드
   return (
-    <AdminClient
-      admin={admin}
-      courses={courses ?? []}
-      sessions={sessions ?? []}
-      students={students ?? []}
-      lateReasons={lateReasons ?? []}
-      absenceRequests={absenceRequests ?? []}
-      dropouts={dropouts ?? []}
-      settings={settings}
-      materials={materials ?? []}
-      periodsMap={periodsMap}
-      todayCounts={counts}
-      todaySession={todaySession ?? null}
-    />
+    <div className="min-h-screen bg-gradient-to-br from-red-50 to-pink-100">
+      <nav className="bg-white shadow">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+          <h1 className="text-2xl font-bold text-gray-900">관리자 대시보드</h1>
+          <button onClick={handleLogout} className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg">
+            <LogOut className="w-4 h-4" />
+            로그아웃
+          </button>
+        </div>
+      </nav>
+
+      <main className="max-w-7xl mx-auto px-4 py-8">
+        <div className="bg-white rounded-lg shadow p-8 mb-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">안녕하세요, {user.name}님!</h2>
+          <p className="text-gray-600">관리자 권한으로 로그인했습니다.</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="bg-white rounded-lg shadow p-8">
+            <h3 className="text-xl font-bold text-gray-900 mb-4">📊 사업단 관리</h3>
+            <div className="space-y-2">
+              <button onClick={() => setAdminPage('courses')} className="w-full text-left px-4 py-2 bg-blue-50 hover:bg-blue-100 rounded text-blue-700 font-medium">
+                ➕ 사업단 추가
+              </button>
+              <button onClick={() => setAdminPage('courses')} className="w-full text-left px-4 py-2 bg-green-50 hover:bg-green-100 rounded text-green-700 font-medium">
+                ✏️ 사업단 수정
+              </button>
+              <button onClick={() => setAdminPage('courses')} className="w-full text-left px-4 py-2 bg-red-50 hover:bg-red-100 rounded text-red-700 font-medium">
+                🗑️ 사업단 삭제
+              </button>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg shadow p-8">
+            <h3 className="text-xl font-bold text-gray-900 mb-4">👥 학생 관리</h3>
+            <div className="space-y-2">
+              <button onClick={() => setAdminPage('students')} className="w-full text-left px-4 py-2 bg-purple-50 hover:bg-purple-100 rounded text-purple-700 font-medium">
+                📋 학생 목록
+              </button>
+              <button onClick={() => setAdminPage('attendance')} className="w-full text-left px-4 py-2 bg-orange-50 hover:bg-orange-100 rounded text-orange-700 font-medium">
+                📊 출석 현황
+              </button>
+              <button onClick={() => setAdminPage('late')} className="w-full text-left px-4 py-2 bg-yellow-50 hover:bg-yellow-100 rounded text-yellow-700 font-medium">
+                ⏰ 지각 관리
+              </button>
+              <button onClick={() => setAdminPage('dropout')} className="w-full text-left px-4 py-2 bg-red-50 hover:bg-red-100 rounded text-red-700 font-medium">
+                🚫 중간이탈 관리
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
   )
 }
