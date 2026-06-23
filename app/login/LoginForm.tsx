@@ -244,19 +244,14 @@ export default function LoginPage() {
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 사업단
               </label>
-              <select
+              <input
+                type="text"
                 value={courseId}
                 onChange={(e) => setCourseId(e.target.value)}
                 required
+                placeholder="예: 1번 사업단"
                 className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
-              >
-                <option value="">선택해주세요</option>
-                {courses.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.title}
-                  </option>
-                ))}
-              </select>
+              />
             </div>
 
             <div>
