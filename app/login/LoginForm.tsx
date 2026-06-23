@@ -15,6 +15,7 @@ interface User {
 }
 
 export default function LoginPage() {
+  // 출석체크 시스템 로그인 페이지
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
