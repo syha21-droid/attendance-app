@@ -73,7 +73,11 @@ export default function StudentPage() {
   }
 
   const handleCourseClick = (courseName: string) => {
-    window.location.href = '/student/course?name=' + encodeURIComponent(courseName)
+    router.push('/student/course?name=' + encodeURIComponent(courseName))
+  }
+
+  const handleEnrollCourseClick = (course: string) => {
+    router.push('/student/course?name=' + encodeURIComponent(course))
   }
 
   const handleWithdraw = (course: string) => {
@@ -164,19 +168,23 @@ export default function StudentPage() {
             <p className="text-gray-500 text-center py-8">수강 강의가 없습니다</p>
           ) : (
             <div className="space-y-3">
-              {enrolledCourses.map((course) => (
-                <button
-                  key={course}
-                  onClick={() => handleCourseClick(course)}
-                  className="w-full text-left flex items-center justify-between bg-gradient-to-r from-indigo-50 to-blue-50 p-4 rounded-lg border border-indigo-200 hover:shadow-lg transition-all"
-                >
-                  <div>
-                    <p className="font-semibold text-gray-900">{course}</p>
-                    <p className="text-sm text-gray-600">✅ 수강 중</p>
-                  </div>
-                  <span className="text-indigo-600">→</span>
-                </button>
-              ))}
+              {enrolledCourses.length > 0 ? (
+                enrolledCourses.map((course) => (
+                  <button
+                    key={course}
+                    onClick={() => handleEnrollCourseClick(course)}
+                    className="w-full text-left flex items-center justify-between bg-gradient-to-r from-indigo-50 to-blue-50 p-4 rounded-lg border border-indigo-200 hover:shadow-lg transition-all cursor-pointer"
+                  >
+                    <div>
+                      <p className="font-semibold text-gray-900">{course}</p>
+                      <p className="text-sm text-gray-600">✅ 수강 중</p>
+                    </div>
+                    <span className="text-indigo-600">→</span>
+                  </button>
+                ))
+              ) : (
+                <p className="text-gray-500 text-center py-4">수강 강의가 없습니다. 강의를 등록해주세요.</p>
+              )}
             </div>
           )}
         </div>
