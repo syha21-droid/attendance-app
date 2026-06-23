@@ -47,11 +47,13 @@ export default function LoginPage() {
       localStorage.setItem('attendance_current_user', JSON.stringify(user))
       toast.success('로그인 성공!')
 
-      if (user.isAdmin) {
-        router.push('/admin')
-      } else {
-        router.push('/student')
-      }
+      setTimeout(() => {
+        if (user.isAdmin) {
+          window.location.href = '/admin'
+        } else {
+          window.location.href = '/student'
+        }
+      }, 500)
       setLoading(false)
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : '로그인 실패'
@@ -85,7 +87,9 @@ export default function LoginPage() {
 
       localStorage.setItem('attendance_current_user', JSON.stringify(newUser))
       toast.success('✅ 가입 완료! 학생 대시보드로 이동합니다.')
-      router.push('/student')
+      setTimeout(() => {
+        window.location.href = '/student'
+      }, 500)
       setLoading(false)
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : '가입 실패'
@@ -114,7 +118,9 @@ export default function LoginPage() {
 
       localStorage.setItem('attendance_current_user', JSON.stringify(newAdmin))
       toast.success('✅ 관리자 가입 완료! 관리자 대시보드로 이동합니다.')
-      router.push('/admin')
+      setTimeout(() => {
+        window.location.href = '/admin'
+      }, 500)
       setLoading(false)
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : '관리자 가입 실패'
@@ -134,7 +140,9 @@ export default function LoginPage() {
     }
     localStorage.setItem('attendance_current_user', JSON.stringify(testUser))
     toast.success('✅ 학생 대시보드로 이동합니다!')
-    router.push('/student')
+    setTimeout(() => {
+      window.location.href = '/student'
+    }, 500)
   }
 
   function handleQuickAdminTest() {
@@ -147,7 +155,9 @@ export default function LoginPage() {
     }
     localStorage.setItem('attendance_current_user', JSON.stringify(testAdmin))
     toast.success('✅ 관리자 대시보드로 이동합니다!')
-    router.push('/admin')
+    setTimeout(() => {
+      window.location.href = '/admin'
+    }, 500)
   }
 
 
