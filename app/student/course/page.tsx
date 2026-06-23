@@ -1,9 +1,12 @@
 'use client'
 
+import { Suspense } from 'react'
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { LogOut, Clock, AlertCircle } from 'lucide-react'
+
+export const dynamic = 'force-dynamic'
 
 interface User {
   id: string
@@ -18,7 +21,7 @@ interface Attendance {
   status: string
 }
 
-export default function CoursePage() {
+function CoursePageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const courseName = searchParams.get('name') || ''
@@ -155,5 +158,13 @@ export default function CoursePage() {
         </div>
       </main>
     </div>
+  )
+}
+
+export default function CoursePage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">로딩 중...</div>}>
+      <CoursePageContent />
+    </Suspense>
   )
 }
