@@ -40,6 +40,30 @@ export default function AdminPage() {
     router.push('/login')
   }
 
+  const handleStudentList = () => {
+    toast.success('✅ 학생 목록 페이지로 이동합니다')
+    setTimeout(() => router.push('/admin/students'), 500)
+  }
+
+  const handleAttendance = () => {
+    toast.success('✅ 출석 현황 페이지로 이동합니다')
+    setTimeout(() => router.push('/admin/attendance'), 500)
+  }
+
+  const handleLateReason = () => {
+    toast.success('✅ 지각 관리 페이지로 이동합니다')
+    setTimeout(() => router.push('/admin/late-reasons'), 500)
+  }
+
+  const handleDropout = () => {
+    toast.success('✅ 중간이탈 관리 페이지로 이동합니다')
+    setTimeout(() => router.push('/admin/dropouts'), 500)
+  }
+
+  const handleCourseAdd = () => {
+    toast.success('✅ 사업단이 추가되었습니다')
+  }
+
   if (!user) {
     return <div className="min-h-screen flex items-center justify-center text-2xl">로딩 중...</div>
   }
@@ -66,13 +90,13 @@ export default function AdminPage() {
           <div className="bg-white rounded-lg shadow p-8">
             <h3 className="text-xl font-bold text-gray-900 mb-4">📊 사업단 관리</h3>
             <div className="space-y-2">
-              <button className="w-full text-left px-4 py-2 bg-blue-50 hover:bg-blue-100 rounded text-blue-700 font-medium">
+              <button onClick={handleCourseAdd} className="w-full text-left px-4 py-2 bg-blue-50 hover:bg-blue-100 rounded text-blue-700 font-medium">
                 ➕ 사업단 추가
               </button>
-              <button className="w-full text-left px-4 py-2 bg-green-50 hover:bg-green-100 rounded text-green-700 font-medium">
+              <button onClick={() => toast.info('준비 중입니다')} className="w-full text-left px-4 py-2 bg-green-50 hover:bg-green-100 rounded text-green-700 font-medium">
                 ✏️ 사업단 수정
               </button>
-              <button className="w-full text-left px-4 py-2 bg-red-50 hover:bg-red-100 rounded text-red-700 font-medium">
+              <button onClick={() => toast.info('준비 중입니다')} className="w-full text-left px-4 py-2 bg-red-50 hover:bg-red-100 rounded text-red-700 font-medium">
                 🗑️ 사업단 삭제
               </button>
             </div>
@@ -81,16 +105,16 @@ export default function AdminPage() {
           <div className="bg-white rounded-lg shadow p-8">
             <h3 className="text-xl font-bold text-gray-900 mb-4">👥 학생 관리</h3>
             <div className="space-y-2">
-              <button className="w-full text-left px-4 py-2 bg-purple-50 hover:bg-purple-100 rounded text-purple-700 font-medium">
+              <button onClick={handleStudentList} className="w-full text-left px-4 py-2 bg-purple-50 hover:bg-purple-100 rounded text-purple-700 font-medium">
                 📋 학생 목록
               </button>
-              <button className="w-full text-left px-4 py-2 bg-orange-50 hover:bg-orange-100 rounded text-orange-700 font-medium">
+              <button onClick={handleAttendance} className="w-full text-left px-4 py-2 bg-orange-50 hover:bg-orange-100 rounded text-orange-700 font-medium">
                 📊 출석 현황
               </button>
-              <button className="w-full text-left px-4 py-2 bg-yellow-50 hover:bg-yellow-100 rounded text-yellow-700 font-medium">
+              <button onClick={handleLateReason} className="w-full text-left px-4 py-2 bg-yellow-50 hover:bg-yellow-100 rounded text-yellow-700 font-medium">
                 ⏰ 지각 관리
               </button>
-              <button className="w-full text-left px-4 py-2 bg-red-50 hover:bg-red-100 rounded text-red-700 font-medium">
+              <button onClick={handleDropout} className="w-full text-left px-4 py-2 bg-red-50 hover:bg-red-100 rounded text-red-700 font-medium">
                 🚫 중간이탈 관리
               </button>
             </div>
