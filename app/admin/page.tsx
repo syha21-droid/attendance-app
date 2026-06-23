@@ -15,6 +15,8 @@ interface User {
 export default function AdminPage() {
   const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
+  const [courses, setCourses] = useState<string[]>([])
+  const [newCourse, setNewCourse] = useState('')
 
   useEffect(() => {
     const userData = localStorage.getItem('attendance_current_user')
@@ -30,10 +32,34 @@ export default function AdminPage() {
         return
       }
       setUser(parsedUser)
+
+      const savedCourses = localStorage.getItem('admin_courses')
+      if (savedCourses) {
+        setCourses(JSON.parse(savedCourses))
+      }
     } catch (e) {
       router.push('/login')
     }
   }, [router])
+
+  const handleAddCourse = () => {
+    if (!newCourse.trim()) {
+      toast.error('강의명을 입력하세요')
+      return
+    }
+    const updated = [...courses, newCourse]
+    setCourses(updated)
+    localStorage.setItem('admin_courses', JSON.stringify(updated))
+    setNewCourse('')
+    toast.success('✅ 강의가 추가되었습니다')
+  }
+
+  const handleDeleteCourse = (index: number) => {
+    const updated = courses.filter((_, i) => i !== index)
+    setCourses(updated)
+    localStorage.setItem('admin_courses', JSON.stringify(updated))
+    toast.success('✅ 강의가 삭제되었습니다')
+  }
 
   const handleLogout = () => {
     localStorage.removeItem('attendance_current_user')
@@ -84,6 +110,41 @@ export default function AdminPage() {
         <div className="bg-white rounded-lg shadow p-8 mb-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-2">안녕하세요, {user.name}님!</h2>
           <p className="text-gray-600">관리자 권한으로 로그인했습니다</p>
+        </div>
+
+        <div className="bg-white rounded-lg shadow p-8 mb-8">
+          <h3 className="text-xl font-bold text-gray-900 mb-4">📚 강의 관리</h3>
+          <div className="flex gap-2 mb-4">
+            <input
+              type="text"
+              value={newCourse}
+              onChange={(e) => setNewCourse(e.target.value)}
+              placeholder="강의명 입력 (예: 토요특강, Python 기초...)"
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              onKeyPress={(e) => e.key === 'Enter' && handleAddCourse()}
+            />
+            <button
+              onClick={handleAddCourse}
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
+            >
+              + 추가
+            </button>
+          </div>
+          {courses.length > 0 && (
+            <div className="space-y-2">
+              {courses.map((course, idx) => (
+                <div key={idx} className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
+                  <span className="font-medium text-gray-900">{course}</span>
+                  <button
+                    onClick={() => handleDeleteCourse(idx)}
+                    className="text-red-600 hover:text-red-800 font-medium"
+                  >
+                    삭제
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

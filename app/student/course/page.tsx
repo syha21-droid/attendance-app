@@ -24,10 +24,11 @@ interface Attendance {
 function CoursePageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const courseName = searchParams.get('name') || ''
+  const courseName = searchParams.get('name') || '강의명'
 
   const [user, setUser] = useState<User | null>(null)
   const [attendances, setAttendances] = useState<Attendance[]>([])
+  const [attendanceStatus, setAttendanceStatus] = useState('미확인')
 
   useEffect(() => {
     if (typeof window !== 'undefined') {

@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { LogOut, BookOpen } from 'lucide-react'
-import { getCourses } from '@/lib/storage/courses'
 
 interface User {
   id: string
@@ -17,7 +16,7 @@ interface User {
 export default function StudentPage() {
   const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
-  const [courses, setCourses] = useState<any[]>([])
+  const [courses, setCourses] = useState<string[]>([])
   const [enrolledCourses, setEnrolledCourses] = useState<string[]>([])
   const [selectedCourse, setSelectedCourse] = useState('')
   const [showEnrollForm, setShowEnrollForm] = useState(false)
@@ -33,8 +32,12 @@ export default function StudentPage() {
       const parsedUser = JSON.parse(userData)
       setUser(parsedUser)
 
-      const courseList = getCourses()
-      setCourses(courseList)
+      const savedCourses = localStorage.getItem('admin_courses')
+      if (savedCourses) {
+        setCourses(JSON.parse(savedCourses))
+      } else {
+        setCourses(['Python 기초', '웹개발', '데이터분석'])
+      }
 
       const enrolled = localStorage.getItem('enrolled_courses_' + parsedUser.id)
       if (enrolled) {
@@ -141,9 +144,9 @@ export default function StudentPage() {
                   className="flex-1 px-4 py-2 border border-gray-200 rounded-lg"
                 >
                   <option value="">-- 강의를 선택하세요 --</option>
-                  {courses.map((c) => (
-                    <option key={c.id} value={c.title}>
-                      {c.title}
+                  {courses.map((c, idx) => (
+                    <option key={idx} value={c}>
+                      {c}
                     </option>
                   ))}
                 </select>
