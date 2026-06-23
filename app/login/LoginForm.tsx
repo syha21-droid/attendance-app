@@ -22,7 +22,8 @@ export default function LoginPage() {
   useEffect(() => {
     async function fetchCourses() {
       const supabase = createClient()
-      const { data } = await supabase.from('courses').select('id, title')
+      const { data, error } = await supabase.from('courses').select('id, title')
+      console.log('Courses fetch result:', { data, error })
       if (data) setCourses(data)
     }
     fetchCourses()
