@@ -160,7 +160,7 @@ function CoursePageContent() {
           </div>
 
           <div className="bg-white rounded-lg shadow p-8">
-            <h3 className="text-2xl font-bold text-gray-900 mb-6">📊 출석 현황</h3>
+            <h3 className="text-2xl font-bold text-gray-900 mb-6">📊 내 출석 현황</h3>
             <div className="space-y-3">
               <div className="flex items-center justify-between bg-green-50 p-3 rounded-lg">
                 <span className="font-medium">1교시</span>
@@ -175,6 +175,42 @@ function CoursePageContent() {
                 <span className="bg-gray-200 text-gray-800 px-3 py-1 rounded-full text-sm font-medium">미응시</span>
               </div>
             </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow p-8 mt-8">
+          <h3 className="text-2xl font-bold text-gray-900 mb-6">👥 {courseName} 수강생 출석 현황</h3>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50 border-b">
+                <tr>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">수강생</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">1교시</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">2교시</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">3교시</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b hover:bg-gray-50">
+                  <td className="px-4 py-3 font-medium text-gray-900">김학생</td>
+                  <td className="px-4 py-3"><span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium">출석</span></td>
+                  <td className="px-4 py-3"><span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs font-medium">지각</span></td>
+                  <td className="px-4 py-3"><span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium">출석</span></td>
+                </tr>
+                <tr className="border-b hover:bg-gray-50">
+                  <td className="px-4 py-3 font-medium text-gray-900">이학생</td>
+                  <td className="px-4 py-3"><span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium">출석</span></td>
+                  <td className="px-4 py-3"><span className="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-medium">결석</span></td>
+                  <td className="px-4 py-3"><span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium">출석</span></td>
+                </tr>
+                <tr className="hover:bg-gray-50">
+                  <td className="px-4 py-3 font-medium text-gray-900">박학생</td>
+                  <td className="px-4 py-3"><span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs font-medium">지각</span></td>
+                  <td className="px-4 py-3"><span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium">출석</span></td>
+                  <td className="px-4 py-3"><span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium">공결</span></td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
 
