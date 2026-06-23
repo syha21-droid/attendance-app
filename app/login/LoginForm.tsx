@@ -37,10 +37,11 @@ export default function LoginPage() {
         throw new Error('이메일 또는 비밀번호가 잘못되었습니다')
       }
 
+      // 즉시 페이지 리로드로 리다이렉트
       if (user.isAdmin) {
-        router.push('/admin')
+        window.location.href = '/admin'
       } else {
-        router.push('/dashboard')
+        window.location.href = '/dashboard'
       }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : '로그인 실패'
@@ -73,15 +74,13 @@ export default function LoginPage() {
       })
 
       toast.success('가입 완료! 로그인해주세요')
-      setTimeout(() => {
-        setMode('login')
-        setEmail('')
-        setPassword('')
-        setName('')
-        setCourseId('')
-        setClassNumber('')
-        setLoading(false)
-      }, 500)
+      setMode('login')
+      setEmail('')
+      setPassword('')
+      setName('')
+      setCourseId('')
+      setClassNumber('')
+      setLoading(false)
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : '가입 실패'
       toast.error(message)
@@ -108,13 +107,11 @@ export default function LoginPage() {
       })
 
       toast.success('관리자 가입 완료! 로그인해주세요')
-      setTimeout(() => {
-        setMode('login')
-        setEmail('')
-        setPassword('')
-        setName('')
-        setLoading(false)
-      }, 500)
+      setMode('login')
+      setEmail('')
+      setPassword('')
+      setName('')
+      setLoading(false)
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : '관리자 가입 실패'
       toast.error(message)
