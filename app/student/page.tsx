@@ -20,6 +20,7 @@ export default function StudentPage() {
   const [enrolledCourses, setEnrolledCourses] = useState<string[]>([])
   const [selectedCourse, setSelectedCourse] = useState('')
   const [showEnrollForm, setShowEnrollForm] = useState(false)
+  const [expandedCourse, setExpandedCourse] = useState<string | null>(null)
 
   useEffect(() => {
     const userData = localStorage.getItem('attendance_current_user')
@@ -168,23 +169,60 @@ export default function StudentPage() {
             <p className="text-gray-500 text-center py-8">수강 강의가 없습니다</p>
           ) : (
             <div className="space-y-3">
-              {enrolledCourses.length > 0 ? (
-                enrolledCourses.map((course) => (
+              {enrolledCourses.map((course) => (
+                <div key={course}>
                   <button
-                    key={course}
-                    onClick={() => handleEnrollCourseClick(course)}
+                    onClick={() => setExpandedCourse(expandedCourse === course ? null : course)}
                     className="w-full text-left flex items-center justify-between bg-gradient-to-r from-indigo-50 to-blue-50 p-4 rounded-lg border border-indigo-200 hover:shadow-lg transition-all cursor-pointer"
                   >
                     <div>
                       <p className="font-semibold text-gray-900">{course}</p>
                       <p className="text-sm text-gray-600">✅ 수강 중</p>
                     </div>
-                    <span className="text-indigo-600">→</span>
+                    <span className={`transition-transform ${expandedCourse === course ? 'rotate-180' : ''}`}>▼</span>
                   </button>
-                ))
-              ) : (
-                <p className="text-gray-500 text-center py-4">수강 강의가 없습니다. 강의를 등록해주세요.</p>
-              )}
+
+                  {expandedCourse === course && (
+                    <div className="bg-white border border-indigo-200 border-t-0 p-4 rounded-b-lg space-y-4">
+                      <div className="grid grid-cols-3 gap-2">
+                        <div className="bg-green-50 p-2 rounded text-center">
+                          <p className="text-xs text-gray-600">1교시</p>
+                          <span className="text-xs bg-green-200 text-green-800 px-2 py-1 rounded inline-block">출석</span>
+                        </div>
+                        <div className="bg-yellow-50 p-2 rounded text-center">
+                          <p className="text-xs text-gray-600">2교시</p>
+                          <span className="text-xs bg-yellow-200 text-yellow-800 px-2 py-1 rounded inline-block">지각</span>
+                        </div>
+                        <div className="bg-gray-50 p-2 rounded text-center">
+                          <p className="text-xs text-gray-600">3교시</p>
+                          <span className="text-xs bg-gray-200 text-gray-800 px-2 py-1 rounded inline-block">미응시</span>
+                        </div>
+                      </div>
+                      <div className="border-t pt-3">
+                        <p className="font-semibold text-sm mb-2">📚 학습 자료</p>
+                        <div className="text-xs space-y-1">
+                          <div>📄 강의자료.pdf</div>
+                          <div>📹 강의영상.mp4</div>
+                          <div>📊 슬라이드.ppt</div>
+                        </div>
+                      </div>
+                      <div className="border-t pt-3">
+                        <p className="font-semibold text-sm mb-2">👥 수강생 출석</p>
+                        <div className="text-xs space-y-1">
+                          <div className="flex justify-between">
+                            <span>김학생</span>
+                            <span className="text-gray-600">출석/지각/출석</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>이학생</span>
+                            <span className="text-gray-600">출석/결석/출석</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           )}
         </div>
