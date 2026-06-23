@@ -37,15 +37,11 @@ export default function LoginPage() {
         throw new Error('이메일 또는 비밀번호가 잘못되었습니다')
       }
 
-      toast.success('로그인 성공!')
-
-      setTimeout(() => {
-        if (user.isAdmin) {
-          router.push('/admin')
-        } else {
-          router.push('/dashboard')
-        }
-      }, 500)
+      if (user.isAdmin) {
+        router.push('/admin')
+      } else {
+        router.push('/dashboard')
+      }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : '로그인 실패'
       toast.error(message)
