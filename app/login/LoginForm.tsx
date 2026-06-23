@@ -21,10 +21,15 @@ export default function LoginPage() {
 
   useEffect(() => {
     async function fetchCourses() {
-      const supabase = createClient()
-      const { data, error } = await supabase.from('courses').select('id, title')
-      console.log('Courses fetch result:', { data, error })
-      if (data) setCourses(data)
+      try {
+        const res = await fetch('/api/courses')
+        if (!res.ok) throw new Error('사업단 로드 실패')
+        const data = await res.json()
+        console.log('Courses fetch result:', { data })
+        setCourses(data)
+      } catch (err) {
+        console.error('Courses fetch error:', err)
+      }
     }
     fetchCourses()
   }, [])
