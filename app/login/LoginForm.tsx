@@ -38,16 +38,17 @@ export default function LoginPage() {
       }
 
       toast.success('로그인 성공!')
-      if (user.isAdmin) {
-        router.push('/admin')
-      } else {
-        router.push('/dashboard')
-      }
-      router.refresh()
+
+      setTimeout(() => {
+        if (user.isAdmin) {
+          router.push('/admin')
+        } else {
+          router.push('/dashboard')
+        }
+      }, 500)
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : '로그인 실패'
       toast.error(message)
-    } finally {
       setLoading(false)
     }
   }
@@ -76,16 +77,18 @@ export default function LoginPage() {
       })
 
       toast.success('가입 완료! 로그인해주세요')
-      setMode('login')
-      setEmail('')
-      setPassword('')
-      setName('')
-      setCourseId('')
-      setClassNumber('')
+      setTimeout(() => {
+        setMode('login')
+        setEmail('')
+        setPassword('')
+        setName('')
+        setCourseId('')
+        setClassNumber('')
+        setLoading(false)
+      }, 500)
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : '가입 실패'
       toast.error(message)
-    } finally {
       setLoading(false)
     }
   }
@@ -109,14 +112,16 @@ export default function LoginPage() {
       })
 
       toast.success('관리자 가입 완료! 로그인해주세요')
-      setMode('login')
-      setEmail('')
-      setPassword('')
-      setName('')
+      setTimeout(() => {
+        setMode('login')
+        setEmail('')
+        setPassword('')
+        setName('')
+        setLoading(false)
+      }, 500)
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : '관리자 가입 실패'
       toast.error(message)
-    } finally {
       setLoading(false)
     }
   }
