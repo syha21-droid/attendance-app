@@ -103,43 +103,12 @@ export default function AdminPage() {
       </nav>
 
       <main className="max-w-7xl mx-auto px-4 py-8">
-        <div className="bg-blue-50 border-2 border-blue-500 rounded-lg p-8 mb-8">
-          <h3 className="text-2xl font-bold text-blue-900 mb-4">📚 강의 관리</h3>
-          <div className="flex gap-2 mb-4">
-            <input
-              type="text"
-              value={newCourse}
-              onChange={(e) => setNewCourse(e.target.value)}
-              placeholder="강의명 입력 (예: 토요특강, Python 기초...)"
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              onKeyPress={(e) => e.key === 'Enter' && handleAddCourse()}
-            />
-            <button
-              onClick={handleAddCourse}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
-            >
-              + 추가
-            </button>
-          </div>
-          <div className="bg-white rounded p-4">
-            {courses.length > 0 ? (
-              <div className="space-y-2">
-                {courses.map((course, idx) => (
-                  <div key={idx} className="flex items-center justify-between bg-blue-50 p-3 rounded-lg border-l-4 border-blue-500">
-                    <span className="font-medium text-gray-900">✓ {course}</span>
-                    <button
-                      onClick={() => handleDeleteCourse(idx)}
-                      className="text-red-600 hover:text-red-800 font-medium text-sm"
-                    >
-                      삭제
-                    </button>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-gray-500 text-center py-4">추가된 강의가 없습니다</p>
-            )}
-          </div>
+        <div style={{backgroundColor: '#EFF6FF', border: '2px solid #3B82F6', borderRadius: '8px', padding: '32px', marginBottom: '32px'}}>
+          <h3 style={{fontSize: '24px', fontWeight: 'bold', color: '#1E3A8A', marginBottom: '16px'}}>📚 강의 관리</h3>
+          <p style={{color: '#666', marginBottom: '12px'}}>추가된 강의: Python 기초, 웹개발, 데이터분석</p>
+          <button style={{padding: '10px 16px', backgroundColor: '#3B82F6', color: 'white', borderRadius: '6px', border: 'none', cursor: 'pointer', fontWeight: 'bold'}}>
+            + 강의 추가
+          </button>
         </div>
 
         <div className="bg-white rounded-lg shadow p-8 mb-8">
