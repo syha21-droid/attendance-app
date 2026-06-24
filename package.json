@@ -1,29 +1,29 @@
 {
-  "name": "attendance-app",
+  "name": "attendance-system-v2",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "lint": "eslint"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.108.2",
-    "date-fns": "^3.6.0",
-    "html5-qrcode": "^2.3.8",
-    "next": "^16.2.9",
-    "qrcode.react": "^3.2.0",
-    "react": "^18",
-    "react-dom": "^18",
-    "react-hot-toast": "^2.6.0"
+    "lucide-react": "^1.21.0",
+    "next": "16.2.9",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "react-hot-toast": "^2.6.0",
+    "zustand": "^5.0.14"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "autoprefixer": "^10.0.1",
-    "postcss": "^8",
-    "tailwindcss": "^3.3.0",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.9",
+    "tailwindcss": "^4",
     "typescript": "^5"
   }
 }
